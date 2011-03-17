@@ -1,0 +1,257 @@
+\documentclass{article}
+\usepackage{geometry}
+\usepackage[section]{placeins}
+\usepackage{graphicx}
+\usepackage{url}
+
+\usepackage{hyperref}
+
+\title{Gouda Turtle Dictionary - Technical Documentation}
+
+\begin{document}
+
+\section{Specification}
+
+\subsection{Introduction}
+
+\paragraph{Purpose of the System}
+The Internet is used for academic, professional and personal purposes.
+The wide range of users and contributors results in frequent encounters
+with unknown words. Users may navigate to a suitable website to define
+these words, or (more commonly) choose to maintain their ignorance.
+\emph{Gouda Turtle Dictionary} aims to assist the lexicon-deficient in
+overcoming their ignorance with ease.
+
+\paragraph{Scope of the System}
+\emph{Gouda Turtle Dictionary} is a Firefox extension that aims to dramatically
+simplify the process of looking up words. It will provide the user with a keyboard
+shortcut to open up a definition in a popup window. This window will also
+contain links to different word resources. In addition, the extension will
+store the words that have been looked up by the user. These words will pop
+up in a window, providing the user with a Word of the Day (by default).
+
+\subsection{Objectives of the Project}
+
+There are several overall objectives for the extension. It should provide
+users with an outstanding, simple, and easy-to-use tool for
+referencing words. In addition, it should provide users with documentation
+outlining a complete walkthrough of the system so that the extension has a
+very shallow learning curve. This project has three major subsystems: first,
+a user interface that is friendly and easy to navigate; second, a word of the
+day feature that reminds users of the words they have looked up; third, a
+back-end that provides a link between the word resources and the user interface.
+
+\FloatBarrier
+\section{High--Level Design}
+
+The interactions of the different components of \emph{Gouda Turtle Dictionary} are
+perhaps best explained by first describing the file structure of the source
+code. An outline of the directory structure is shown in
+Table~\ref{tab:dirstruct}. Most of the functionality of the extension is
+stored in /chrome/content.
+
+\begin{table}[h!]
+\centering
+\caption{Directory Structure}
+\label{tab:dirstruct}
+\scalebox{.75}{
+\begin{tabular}{|lllll|}
+\hline
+/ &&&&\\
+&    chrome.manifest &&&\\
+&    install.rdf     &&&\\
+\cline{2-5}
+&    chrome/         &&&\\
+\cline{3-5}
+&&                   content/&&\\
+&&&                              about.xul&\\
+&&&                              normalpopup.xul&\\
+&&&                              options.xul&\\
+&&&                              overlay.js&\\
+&&&                              overlay.xul&\\
+&&&                              parsers.js&\\
+&&&                              wotdoverlay.js&\\
+&&&                              wotdpopup.xul&\\
+\cline{3-5}
+&&                   locale/&&\\
+\cline{4-5}
+&&&                              en-US/&\\
+&&&&                                     about.dtd\\
+&&&&                                     hello.dtd\\
+&&&&                                     options.dtd\\
+&&&&                                     overlay.dtd\\
+&&&&                                     overlay.properties\\
+\cline{3-5}
+&&                   skin/&&\\
+&&&                              overlay.css&\\
+\cline{2-5}
+&    defaults/       &&&\\
+\cline{3-5}
+&&                   preferences/&&\\
+&&&                              prefs.js&\\
+\hline
+\end{tabular}
+}
+\end{table}
+
+\paragraph{User Interface}
+The user interface is defined by the XUL files. These files describe the
+UI elements and associate UI elements with actions. It accomplishes this
+by specifying which functions to execute with what parameters for different
+UI events.
+
+\paragraph{Core Functionalities}
+These JavaScript files provide functions to perform tasks needed by other
+modules and contain wrapper functions for other functions that allow
+slightly different outcomes for similar actions in different contexts.
+Most of these functions are contained in overlay.js.
+
+\paragraph{Parser Module}
+parsers.js contains the functions that parse HTML from word resources and return
+text containing the formatted entries from the sources.
+
+\section{Low--Level Design}
+
+Much of the \emph{Gouda Turtle Dictionary} extension is built around the standard
+format for an extension -- this file structure is described above. As a result,
+we will not go into detail on why we have chosen this directory structure, nor
+will we describe the contents of files like /install.rdf or /chrome.manifest.
+That information and more details about building a Firefox extension can be
+found at \url{https://developer.mozilla.org/en/building_an_extension}.
+
+As per the Firefox extension specifications, the main components of the
+low--level design of the \emph{Gouda Turtle Dictionary} can be found in
+one directory, chrome/content. One javascript file, overlay.js, orchestrates the
+rest of the files in the directory. It is this file that will be the focus of
+this section.
+
+\paragraph{overlay.js}
+
+\begin{itemize}
+
+\item var GTDict
+
+overlay.js begins with the declaration of a variable GTDict. This variable contains functions that allow \emph{Gouda Turtle Dictionary} to respond to the user's interaction with the Firefox browser. These functions are as follows:
+
+\begin{enumerate}
+\item onLoad: when a user opens a Firefox window, this function determines whether or not it is time to display a WOTD.
+\item onKeyDown: when a user presses down a key, this function determines whether or not the user has activated the word lookup feature of \emph{Gouda Turtle Dictionary} via the hotkey.
+\item onKeyUp: when a user releases a key related to the hotkey key combination, this function responds by informing GTDict that the user is no longer pressing that key --- this information is used by onKeyDown.
+\end{enumerate}
+
+These functions listen for events thrown by the Firefox window.
+
+\item Ancillary functionality of overlay.js
+
+overlay.js contains a number of other functions used to enable looking up words and displaying information about them.
+
+\begin{enumerate}
+\item getHighlightedText(): input -- none. Returns the text highlighted in the current Firefox window.
+\item get-HTML(url): input -- url:string. Returns the raw HTML at the website described by the url.
+\item openUrlNewTab(url): input -- url:string. Opens the website described by the url in a new tab of the current firefox window
+\item getCurrentWord(): input -- none. Returns the value of the preference current-word.
+\item showDefinition(word, addwotd): input -- word:string, addwotd:boolean (yes if the word argument should become a wotd). Opens the xul window described in normalpopup.xul (if addwotd is true) or wotdpopup.xul (if addwotd is false), which will contain the information associated with the input word. To do this, sets the value of the preference current-word to word, so that it can be looked up for use in getDefinition or getWOTDDefinition.
+\item getDefinition(word): input -- word:string. Returns the definition of the word argument, as defined at the preferred word resource. Also adds the word argument to the WOTD list.
+\item getWOTDDefinition(word): input -- word:string. Returns the definition of the word argument, as defined at the preferred word resource. Does not add the word argument to the WOTD list.
+\item addWOTDEntry(word): input -- word:string. Adds the word argument to the rear of the WOTD storage, to be looked up later as part of the WOTD feature.
+\item readWOTDEntry(): input -- none. Reads the first word in the word storage, removes that word from the storage, and pops up the definition. If the storage is empty, it pops up an alert window reminding the user to use \emph{Gouda Turtle Dictionary} more often.
+\end{enumerate}
+
+\end{itemize}
+
+\paragraph{Pop-ups}
+
+There are two different popup windows defined in .xul files: normalpopup.xul and wotdpopup.xul. The two files are nearly identical, except for one of the function calls. Each file defines a popup window for the GT Dictionary; one is intended for the word of the day, and the other is intended for words requested by the user. normalpopup.xul calls getDefinition in overlay.js, which puts the definition into the window and adds the word looked up to the WOTD storage. In contrast, wotdpopup.xul calls getWOTDDefinition, which puts the definition into the window defined but does not add the word to the WOTD storage.
+
+\paragraph{Word of the Day Implementation}
+
+Every time the user looks up a word with \emph{Gouda Turtle Dictionary}, that word is stored in a Firefox preference. This preference is composed of all of the words looked up by the user, delimited by vertical bars. Words are popped off of the front of the preference whenever a word of the day needs to be looked up, and words are pushed to the rear of the preference whenever they are looked up. These tasks are carried out by the overlay.js functions readWOTDEntry() and addWOTDEntry(word).
+
+\paragraph{Parsers}
+/chrome/content/parsers.js contains all of the parsers used by the extension. These parsers take as inputs raw html containing a definition (or an error message) and return as output the pertinent information about the word in question. Each parser is specific to a website -- different websites encode definitions, synonym lists, etc., in different ways. It is thus necessary to be able to parse each website in a unique fashion.
+
+\section{Testing}
+\paragraph{Unit Testing}
+Gouda-Turtle Dictionary was tested extensively during development. Unit testing
+was performed on each feature before its addition to the main source tree.
+
+\paragraph{Blackbox Testing}
+After a preliminary version of the application was completed, and for each
+successive revision, we ran a series of blackbox tests on the application to
+ensure all of the functional requirements were satisfied.
+
+\paragraph{Whitebox Testing}
+During development of each module, we used test drivers and stubs to ensure
+that every statement was executed at least once and that loops, logic, etc.
+were all error-free.
+
+\paragraph{Boundary Case Testing}
+Our application was tested on and shown to be valid in certain boundary cases.
+These cases were as follows:
+\begin{enumerate}
+\item WOTD feature on but no words had been looked up.
+\item WOTD feature with over a million characters in the WOTD storage.
+\item Attempting to define a hundred words in a row.
+\item Attempting to define a word without highlighting a word to define.
+\end{enumerate}
+
+\paragraph{Alpha Testing}
+We released our extension to a limited set of testers using our
+website. They all successfully downloaded, installed, and operated
+our extension. Testers indicated that their experience with the extension
+was positive and gave a few pieces of feedback. The most common comment
+regarded the WOTD frequency -- users wished to be able to modify the frequency,
+and we responded by making the WOTD frequency more adaptable (in that
+it can now be set to activate every [user's preference] hours, for integer
+hours between 1 and 999).
+
+\section{How To Contribute}
+
+\subsection{Adding a Word Resource}
+
+A new word resource can be added as a possible default word resource
+with reasonable ease. One need only know JavaScript to do
+so; no knowledge of the rest of the Gouda Turtle Dictionary internals
+is needed.
+
+\paragraph{Parser Creation}
+The parsers for each word resource can be found in /chrome/content/parsers.js.
+A parser function takes one to two parameters. The first parameter is the
+raw HTML in its entirety from the source as a single string. The optional
+second parameter is the number of entries for the word resource to return.
+A parser returns an array with two elements. The zeroth element is an integer
+error code. The error codes are outlined in Table~\ref{tab:errors}. The first
+element is the parsed text as a string.
+
+\begin{table}
+\centering
+\caption{Error Codes for Parser Functions}
+\label{tab:errors}
+\begin{tabular}{|l|c|}
+\hline
+Code & Description\\
+\hline
+0 & No error.\\
+\hline
+1 & No definition found.\\
+\hline
+\end{tabular}
+\end{table}
+
+The parser function should be appended to /chrome/content/parsers.js. The
+function signature should be of the form
+\textit{\{resource\}\_dot\_\{domain\}\_parse~=~function(raw)}. In current
+versions of Gouda Turtle Dictionary, the parser will return plain text. A
+feature to be added a later date is for parsers to return HTML.
+
+\paragraph{Adding a New Parser to the Existing Structure}
+
+Once you have written a parser for a new word resource, you would probably like to add it to the options already in place. To do this, you must modify two files.
+
+\begin{itemize}
+\item First, you must modify /chrome/content/options.xul. In this file you must add another line of the form
+<radio label="UrbanDictionary.com" value="urbandict"  /> below the existing radio buttons listed, containing an easy-to-understand label and a value.
+\item Second, you must modify /chrome/content/overlay.js. In this file you must add code to two different functions -- getDefinition and getWOTDDefinition. Add another case to the switch in each, with the value being the value assigned to the preference addded in /chrome/content/options.xul. Then copy code from one of the other cases, modifying the call to the parser with a call to the parser you have written.
+\end{itemize}
+
+\end{document}

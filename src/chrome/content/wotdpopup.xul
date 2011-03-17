@@ -1,0 +1,32 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://gtdict/locale/hello.dtd">
+
+<!-- wotdpopup.xul: information describing the wotd popup window (not the normal popup).
+Calls getWOTDDefinition, which does not add the current word to the WOTD storage. -->
+
+<window id="definition-window"
+        xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+<script type="application/x-javascript" src="overlay.js"></script>
+<script type="application/x-javascript" src="parsers.js"></script>
+<vbox style="height: 200px; width: 450px;">
+
+<vbox style="height: 50px; width: 65px;" id="definitions" align="center">
+</vbox>
+
+</vbox>
+<script id="foo" type="application/x-javascript">
+
+	//fill in the nodes of the window
+    	var hbox = document.getElementById("definitions");
+	var descNode = document.createElement("description");
+	var textNode = document.createTextNode(getWOTDDefinition(getCurrentWord()));
+	descNode.appendChild(textNode);
+  	hbox.appendChild(descNode, hbox.firstChild);
+
+    	//set the window's name to the word being looked up
+    	document.title='Word of the Day: ' + getCurrentWord();
+</script>
+
+</window>

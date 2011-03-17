@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<?xml-stylesheet type="text/css" href="chrome://gtdict/skin/overlay.css" ?>
+
+<!-- Adds in the right-click functionality for word lookups --> 
+
+<!DOCTYPE overlay SYSTEM "chrome://gtdict/locale/overlay.dtd">
+
+<overlay id="helloworld-overlay"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">
+
+    <script src="overlay.js"/>
+    <script src="parsers.js"/>
+
+    <popup id="contentAreaContextMenu">
+        <menuitem id="defineit" label="&menu;"
+            oncommand="showDefinition(getHighlightedText(), true);" />
+    </popup>
+</overlay>

@@ -1,0 +1,4 @@
+content 	gtdict 		 	jar:chrome/gtdict.jar!/content/
+locale 		gtdict  en-US 		jar:chrome/gtdict.jar!/locale/en-US/
+overlay		chrome://browser/content/browser.xul		chrome://gtdict/content/overlay.xul
+style		chrome://global/content/customizeToolbar.xul	chrome://gtdict/skin/overlay.css

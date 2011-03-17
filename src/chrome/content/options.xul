@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?xml-stylesheet href="chrome://global/skin/" type="text/css"?>
+<!DOCTYPE prefwindow SYSTEM "chrome://gtdict/locale/options.dtd">
+
+<!-- options.xul: describes the options window. This contains a textbox and a set of radio buttons.
+Developer's note: If you add new parsers and want to make them part of the available word resources,
+add additional entries here under the radio buttons-->
+
+<prefwindow id="gtdict-preferences"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul"
+    title="&prefwindow.title;" >
+    <prefpane id="pane1" label="&pane1.title;" >
+        <script type="application/javascript" src="overlay.js"/>
+        <preferences>
+            <preference id="hotkeypref" name="extensions.gtdict.hotkey"
+                type="string"/>
+	    <preference id="extensions.gtdict.WOTDDuration" name="extensions.gtdict.WOTDDuration" type="int"/>
+	    <preference id="extensions.gtdict.WOTDOn" name="extensions.gtdict.WOTDOn" type="bool"/>
+            <preference id="resourcepref" name="extensions.gtdict.resourcepref"
+                type="string" />
+        </preferences>
+
+	<label control="texthotkeypref">&stringpref.label;</label>
+	<textbox id="texthotkeypref" preference="hotkeypref" maxlength="1" />
+
+	<label control="wotdduration">&WOTDDuration.label;</label>
+	<textbox type="number" id="WOTDDuration" preference="extensions.gtdict.WOTDDuration" maxlength="3" /> 
+	<checkbox label="Would you like to have a word of the day?" id="wotdonpref" preference="extensions.gtdict.WOTDOn"/> 
+
+        <groupbox>
+            <caption label="Default Word Resource"/>
+            <radiogroup id="resourcepref_radio"
+                preference="resourcepref">
+                <radio label="Dictionary.com" value="dictionary"      />
+                <radio label="Thesaurus.com" value="thesaurus"        />
+                <radio label="UrbanDictionary.com" value="urbandict"  />
+            </radiogroup>
+        </groupbox>
+    </prefpane>
+</prefwindow>

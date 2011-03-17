@@ -1,0 +1,45 @@
+<?xml version="1.0"?>
+<?xml-stylesheet href="chrome://global/skin/global.css" type="text/css"?>
+<!DOCTYPE window SYSTEM "chrome://gtdict/locale/hello.dtd">
+
+<!-- normalpopup.xul: information describing the normal popup window (not the WOTD popup). 
+Calls to getDefinition, which adds the current word to the WOTD storage. -->
+
+<window id="definition-window"
+    xmlns="http://www.mozilla.org/keymaster/gatekeeper/there.is.only.xul">    
+    
+    <script type="application/x-javascript" src="overlay.js"></script>
+    <script type="application/x-javascript" src="parsers.js"></script>
+    
+    <vbox style="height: 60px;">
+
+        <vbox style="height: 50px; width: 65px;"
+            id="definitions" align="center">
+        </vbox>
+
+        <hbox id="links" align="center">
+            <button label="&d.label;"
+                oncommand="openUrlNewTab('http://www.dictionary.com/browse/');"
+                />
+            <button label="&t.label;"
+                oncommand="openUrlNewTab('http://thesaurus.com/browse/');"/>
+            <button label="&ud.label;"
+                oncommand="openUrlNewTab('http://urbandictionary.com/');"/>
+            <button label="&wiki.label;"
+                oncommand="openUrlNewTab('http://en.wikipedia.org/wiki/');"/>
+        </hbox>
+    </vbox>
+    <script id="box-fill-in" type="application/x-javascript">
+    
+	//fill in the nodes of the window
+        var hbox = document.getElementById("definitions");
+        var descNode = document.createElement("description");
+        var textNode = document.createTextNode(getDefinition(getCurrentWord()));
+        descNode.appendChild(textNode);
+        hbox.appendChild(descNode, hbox.firstChild);        
+        
+    	//set the window's name to the word being looked up
+    	document.title='GT Dictionary: ' + getCurrentWord();
+    </script>
+</window>
+
